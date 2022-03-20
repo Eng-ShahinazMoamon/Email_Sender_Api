@@ -169,7 +169,7 @@ namespace Email_Sender_Api.Controllers
                 };
             }
         }
-
+        //send mail
         [HttpPost("sendMail")]
         public async Task<ActionResult<ResultModel>> SendMail(int msgId,string[] to)
         {
