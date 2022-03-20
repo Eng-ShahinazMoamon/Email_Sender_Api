@@ -24,13 +24,13 @@ namespace Email_Sender_Api.Controllers
 
         }
 
+        #region Get All Message
         // GET: api/Message
         [HttpGet]
         public ActionResult<ResultModel> GetAllMessage()
         {
             try
             {
-
                 return new ResultModel
                 {
                     IsSuccess = true,
@@ -50,7 +50,9 @@ namespace Email_Sender_Api.Controllers
                 };
             }
         }
+        #endregion
 
+        #region Get Message By Id
         // GET: api/Message/5
         [HttpGet("{id}")]
         public async Task<ActionResult<ResultModel>> GetMessageById(int id)
@@ -78,6 +80,9 @@ namespace Email_Sender_Api.Controllers
             }
         }
 
+        #endregion
+
+        #region Add New Message
         // POST: api/Message
         [HttpPost]
         public async Task<ActionResult<ResultModel>> PostNewMessage(MailDataModel model)
@@ -86,7 +91,7 @@ namespace Email_Sender_Api.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                   var res=_dbContext.MailData.Add(model);
+                    var res = _dbContext.MailData.Add(model);
                     if (res != null)
                     {
                         await _dbContext.SaveChangesAsync();
@@ -117,7 +122,7 @@ namespace Email_Sender_Api.Controllers
             }
             catch
             {
-                 return new ResultModel
+                return new ResultModel
                 {
                     IsSuccess = false,
                     StatusCode = HttpStatusCode.InternalServerError,
@@ -127,6 +132,9 @@ namespace Email_Sender_Api.Controllers
             }
         }
 
+        #endregion
+
+        #region Delete Message
         // GET: api/Message/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<ResultModel>> DeleteMessage(int id)
@@ -137,7 +145,7 @@ namespace Email_Sender_Api.Controllers
                 if (msg != null)
                 {
                     var res = _dbContext.MailData.Remove(msg);
-                    if(res != null)
+                    if (res != null)
                     {
                         await _dbContext.SaveChangesAsync();
                         return new ResultModel
@@ -169,9 +177,13 @@ namespace Email_Sender_Api.Controllers
                 };
             }
         }
-        //send mail
+
+        #endregion
+
+        #region Send Mail
+        //send mail using (messageId,list of mails)
         [HttpPost("sendMail")]
-        public async Task<ActionResult<ResultModel>> SendMail(int msgId,string[] to)
+        public async Task<ActionResult<ResultModel>> SendMail(int msgId, string[] to)
         {
             try
             {
@@ -179,7 +191,7 @@ namespace Email_Sender_Api.Controllers
                 if (msg != null)
                 {
                     // new message(To,Title,Body)
-                    var message = new Message(to, msg.Subject,msg.Body);
+                    var message = new Message(to, msg.Subject, msg.Body);
                     await _emailSender.SendEmailAsync(message);
                     return new ResultModel
                     {
@@ -207,6 +219,7 @@ namespace Email_Sender_Api.Controllers
                     Message = ""
                 };
             }
-        }
+        } 
+        #endregion
     }
     }
