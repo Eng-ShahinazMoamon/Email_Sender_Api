@@ -129,7 +129,7 @@ namespace Email_Sender_Api.Controllers
 
         // GET: api/Message/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<MailDataModel>> DeleteMessage(int id)
+        public async Task<ActionResult<ResultModel>> DeleteMessage(int id)
         {
             try
             {
@@ -140,20 +140,38 @@ namespace Email_Sender_Api.Controllers
                     if(res != null)
                     {
                         await _dbContext.SaveChangesAsync();
-                        return Ok();
+                        return new ResultModel
+                        {
+                            IsSuccess = true,
+                            StatusCode = HttpStatusCode.OK,
+                            Data = "",
+                            Message = ""
+                        };
                     }
                 }
-                return NotFound();
+                return new ResultModel
+                {
+                    IsSuccess = false,
+                    StatusCode = HttpStatusCode.NotFound,
+                    Data = "",
+                    Message = ""
+                };
 
             }
             catch
             {
-                return  BadRequest();
+                return new ResultModel
+                {
+                    IsSuccess = false,
+                    StatusCode = HttpStatusCode.InternalServerError,
+                    Data = "",
+                    Message = ""
+                };
             }
         }
 
         [HttpPost("sendMail")]
-        public async Task<ActionResult> SendMail(int msgId,string[] to)
+        public async Task<ActionResult<ResultModel>> SendMail(int msgId,string[] to)
         {
             try
             {
@@ -163,14 +181,31 @@ namespace Email_Sender_Api.Controllers
                     // new message(To,Title,Body)
                     var message = new Message(to, msg.Subject,msg.Body);
                     await _emailSender.SendEmailAsync(message);
-                    return Ok("Done");
-
+                    return new ResultModel
+                    {
+                        IsSuccess = true,
+                        StatusCode = HttpStatusCode.OK,
+                        Data = "",
+                        Message = "Sended Successfully"
+                    };
                 }
-                return NotFound();
+                return new ResultModel
+                {
+                    IsSuccess = false,
+                    StatusCode = HttpStatusCode.NotFound,
+                    Data = "",
+                    Message = ""
+                };
             }
             catch
             {
-                return BadRequest();
+                return new ResultModel
+                {
+                    IsSuccess = false,
+                    StatusCode = HttpStatusCode.InternalServerError,
+                    Data = "",
+                    Message = ""
+                };
             }
         }
     }
